@@ -30,7 +30,22 @@ const UserSchema = new Schema({
     accountType: {
         type: String,
         required: true
-    }
+    },
+    myCart: [
+        {
+            productId: {
+                type: Schema.Types.ObjectId,
+                ref: 'Product'
+            },
+            quantity: {
+                type: Number,
+                default: 1
+            }
+            
+        }, {
+            timestamps : { createdAt: 'createdAt' }
+        }
+    ]
 
 }, {
     timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' }

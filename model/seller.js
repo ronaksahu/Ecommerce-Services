@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const bcrypt = require('bcrypt');
 
 const SellerSchema = new Schema({
-    sellerName: {
+    username: {
         type: String,
         required: true,
         trim: true
     },
-    sellerEmail: {
+    email: {
         type: String,
         required: true,
         unique: true
@@ -17,13 +18,17 @@ const SellerSchema = new Schema({
         required: true,
         minlength: 7
     },
-    sellerContactNo: {
+    contactNo: {
         type: Number,
         required: true,
         unique: true
     },
     sellerShopName: {
         type: String
+    }, 
+    accountType: {
+        type: String,
+        required: true
     },
     address: {
         city: { type: String, required: true },

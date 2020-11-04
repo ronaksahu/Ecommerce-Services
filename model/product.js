@@ -7,7 +7,6 @@ const ProductSchema = new Schema({
         required: true,
         minlength: 3,
         trim: true,
-        index
     },
     price: {
         type: Number,
@@ -28,6 +27,9 @@ const ProductSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Seller',
         required: true
+    },
+    imageUrl: {
+        type: String
     }
 
 },
