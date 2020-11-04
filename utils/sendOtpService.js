@@ -1,7 +1,7 @@
-
+require('dotenv').config();
 
 const mailjet = require ('node-mailjet')
-.connect('681bc600f5618ac5eb0d891cbef5c33d', '9bd772976d90cdcba123d37ea2e30eb5')
+.connect(process.env.MAILJET_FROM , process.env.MAILJET_TO)
 
 
 async function sendMail(toEmail, username, otp) {
