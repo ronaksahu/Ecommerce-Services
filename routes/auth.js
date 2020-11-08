@@ -15,13 +15,9 @@ authRoutes.post('/login', async (req, res) => {
         const email = req.body.email;
         const password = req.body.password;
 
-        console.log(req.body)
-
         const user = await User.findOne({email});
 
         if(!user) return res.status(200).json({ "message": "email is not registered" });
-
-        console.log(user.password)
 
         const passMatched = await bcrypt.compare(password, user.password);
  
@@ -69,7 +65,8 @@ authRoutes.post('/register', async (req, res) => {
                  username,
                  email,
                  contactNo,
-                 accountType: 'customer' 
+                 accountType: 'customer' ,
+                 cartItemCount: 0
             },
             "JWTTOKEN": generateAccessToken({id: user._id, username})
         });
@@ -104,8 +101,6 @@ authRoutes.post('/sendOtp', async (req, res) => {
         })
 
         const otpSave = await otpData.save();
-
-        console.log("otp save")
 
         res.status(200).json({"status": "OTP SENT TO YOUR EMAIL"});
 
