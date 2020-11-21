@@ -1,7 +1,8 @@
 const routes = require('express').Router();
 const Product = require('../model/product');
 const User = require('../model/user');
-const { Cart } = require('../model/shoppingCart');
+const { Order, Cart } = require('../model/shoppingCart');
+const product = require('../model/product');
 
 routes.post('/getCartItems', async (req, res) => {
 
@@ -188,5 +189,66 @@ routes.get("/emptyCart", async (req, res) => {
         res.sendStatus(500);
     }
 })
+
+
+
+routes.post('/placeOrder', async (req, res) => {
+
+    const user = req.user;
+    const { address } = req.body;
+    try {
+        
+        const cartDetails = await Cart.findOne({ userId: user.id }).populate({
+            path: "items.productId" ,
+            select: "productName price"
+        });
+
+        if(!cartDetails || cartDetails.items.length == 0) return res.status(200).json({"status": "Invalid request"});
+
+        let cartItems = cartDetails.items;
+
+        let productList = [];
+
+        for(item of cartItems) {
+
+            let productOrder = {
+                productId: item.productId._id,
+                quantity: item.quantity,
+                price: item.productId.price,
+                total: item.quantity * item.productId.price
+            };
+
+            productList.push(productOrder);
+        }
+
+        let finalOrder = new Order({
+            products: productList,
+            userId: user.id,
+            address,
+            status: "Processing",
+            subTotal: productList.map(item => item.total).reduce((acc, next) => acc + next)
+        })
+
+        const orderSave = await finalOrder.save();
+        if(!orderSave) return res.status(200).json({ "status": "something went wrong" })
+
+        cartDetails.items = [];
+        cartDetails.subTotal = 0;
+
+        const cartEmpty = await cartDetails.save();
+
+        res.status(200).json({orderSave});
+        
+        
+
+    } catch (err) {
+        console.log(err)
+        res.sendStatus(500);
+    }
+
+})
+
+
+
 
 module.exports = routes;
